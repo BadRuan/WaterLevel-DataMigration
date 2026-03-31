@@ -1,44 +1,35 @@
 from pandas import read_csv
-from storage import console
-from handle import WaterItem
+from rich.console import Console
+from model import WaterItem, Stations
 from storage import PostgresStorage
-from rich.progress import Progress
-from asyncio import run
+from asyncio import run 
 
+console = Console()
+log = console.print
 
 async def main():
-    console.print('run start')
-
-    file_path: str = "waterlevel_202601141954.csv"
-
-    df = read_csv(file_path, header=0)
-    total_count: int = len(df)   
-    with Progress() as progress:
-        task = progress.add_task("数据迁移中", total=total_count)
-        async with PostgresStorage() as storage:
-            for index, row in df.iterrows():
-                date_item = row.tolist()
-                w = WaterItem(
-                    timestamp=date_item[0],
-                    height=float(date_item[1]),
-                    code=int(date_item[2]),
-                    name=date_item[3],
-                    table_name=date_item[4]
-                    )
-                insert_sql: str = f"insert into station_{w.code} (ts, height) values ('{w.timestamp}', {w.height});"
-                query_sql: str = f"select (ts, height) from station_{w.code} where ts='{w.timestamp}';"
-                
-                result_count: int = len(await storage.query(query_sql))
-                if 0 == result_count:
-                    await storage.save(insert_sql)
-                    progress.console.log(f"新增{w.name}站 {w.timestamp[:-4]} {w.height} m数据")
-                else:
-                    progress.console.log(f"已有数据: {w.name}站 {w.timestamp[:-4]} {w.height} m数据")
-                
-            
-    
-    console.print('run end')
-
+    try:
+        file_path: str = 'waterlevel_202601141954.csv'
+        df = read_csv(file_path, header=0)
+        total_count: int = len(df)
+        log(f"csv文件中总共有 {total_count} 条水位数据")
+        flag:int = 0
+        for index, row in df.iterrows():
+            flag = index # type: ignore
+            date_item = row.tolist()
+            w = WaterItem(timestamp=date_item[0], height=float(date_item[1]))
+            code: int = int(date_item[2])
+            for station in Stations:
+                if code == station.code:
+                    station.water_items.append(w)
+        for station in Stations:
+            async with PostgresStorage() as storage: # type: ignore
+                await storage.insert_waterlevel(station)
+                log(f"{station.name}站有 {len(station.water_items)} 条水位数据")
+    except ValueError as e:
+        log(e)
+    finally:
+        log(f"index: {flag}")
 
 if __name__ == "__main__":
     run(main())
