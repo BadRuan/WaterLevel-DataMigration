@@ -1,15 +1,13 @@
 from pandas import read_csv
-from rich.console import Console
 from model import WaterItem, Stations
 from storage import PostgresStorage
 from asyncio import run 
+from utils import log
+from config import file_path
 
-console = Console()
-log = console.print
 
 async def main():
     try:
-        file_path: str = 'waterlevel_202601141954.csv'
         df = read_csv(file_path, header=0)
         total_count: int = len(df)
         log(f"csv文件中总共有 {total_count} 条水位数据")

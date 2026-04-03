@@ -1,16 +1,8 @@
-from typing import List, NamedTuple
+from typing import List
 from psycopg2 import connect as pq_connect
 from model import WaterItem, Station
+from config import postgres
 
-
-class DataConfig(NamedTuple):
-    url: str
-    user: str
-    password: str
-    port: int
-    database: str
-    
-postgres = DataConfig(url='100.95.218.64', user='postgres', password='E,*f*YdGgYSgqfze1tLqc0Pm8CK2', port=44455, database='water') 
 
 class PostgresStorage():   
     def __init__(self) -> None:
