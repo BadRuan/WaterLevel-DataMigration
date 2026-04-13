@@ -1,7 +1,7 @@
 from typing import List
 from psycopg2 import connect as pq_connect
 from model import WaterItem, Station
-from config import postgres
+from settings import postgres
 
 
 class PostgresStorage():   
@@ -50,11 +50,10 @@ class PostgresStorage():
     
     async def insert_waterlevel(self, station: Station):
         # 防止数据过多拼接sql语句过长，对数据进行切片处理
-        def slice_list(data: List, length: int = 1000):
+        def slice_list(data: List[WaterItem], length: int = 1000):
             return [data[i : i + length] for i in range(0, len(data), length)]
 
-        SQL = f"""INSERT INTO station_{station.code} (ts, height)
-                VALUES"""
+        SQL = f"""INSERT INTO station_{station.code} (ts, height) VALUES """
 
         if len(station.water_items) > 0:
 
@@ -63,6 +62,6 @@ class PostgresStorage():
             for wateritem_list in slice_data:
                 sql = SQL
                 for water_item in wateritem_list: # type: ignore
-                    sql += f"('{water_item.timestamp}', {water_item.height}),"
+                    sql += f"('{water_item.timestamp}', {water_item.height})," # type: ignore
                 sql= sql[:-1] + "ON CONFLICT (ts) DO NOTHING;"
                 await self.save(sql + ";")

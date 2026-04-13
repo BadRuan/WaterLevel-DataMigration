@@ -1,9 +1,9 @@
 from pandas import read_csv
-from model import WaterItem, Stations
-from storage import PostgresStorage
 from asyncio import run 
-from utils import log
-from config import file_path
+from utils.storage import PostgresStorage
+from utils.logger import log
+from model import WaterItem
+from settings import file_path, stations_list
 
 
 async def main():
@@ -17,10 +17,10 @@ async def main():
             date_item = row.tolist()
             w = WaterItem(timestamp=date_item[0], height=float(date_item[1]))
             code: int = int(date_item[2])
-            for station in Stations:
+            for station in stations_list:
                 if code == station.code:
                     station.water_items.append(w)
-        for station in Stations:
+        for station in stations_list:
             async with PostgresStorage() as storage: # type: ignore
                 await storage.insert_waterlevel(station)
                 log(f"{station.name}站有 {len(station.water_items)} 条水位数据")
