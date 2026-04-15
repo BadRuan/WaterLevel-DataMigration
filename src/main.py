@@ -1,7 +1,6 @@
 from pandas import read_csv
 from asyncio import run 
-from utils.storage import PostgresStorage
-from utils.logger import log
+from utils import Storage, log
 from model import WaterItem
 from settings import file_path, stations_list
 
@@ -21,7 +20,7 @@ async def main():
                 if code == station.code:
                     station.water_items.append(w)
         for station in stations_list:
-            async with PostgresStorage() as storage: # type: ignore
+            async with Storage() as storage: # type: ignore
                 await storage.insert_waterlevel(station)
                 log(f"{station.name}站有 {len(station.water_items)} 条水位数据")
     except ValueError as e:
