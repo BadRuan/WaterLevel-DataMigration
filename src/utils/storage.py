@@ -11,43 +11,43 @@ class PostgresStorage():
         self.cursor = None
         self.initialized = None
     
-    async def __aenter__(self):
-        await self.ensure_initialized()
+    def __enter__(self):
+        self.ensure_initialized()
         return self
     
-    async def __aexit__(self, exc_type, exc, tb):
+    def __exit__(self, exc_type, exc, tb):
         if self.cursor is not None:
             self.cursor.close()
         if self.connection is not None:
             self.connection.close()
     
-    async def ensure_initialized(self):
+    def ensure_initialized(self):
         if self.initialized is None:
             self.init_connect()
             
-    async def execute(self) -> None:
-        await self.ensure_initialized()
+    def execute(self) -> None:
+        self.ensure_initialized()
 
     def init_connect(self):
         self.connection = pq_connect(host=postgres.url, user=postgres.user, password=postgres.password, port=postgres.port, database=postgres.database)
         if self.connection is not None:    
             self.cursor = self.connection.cursor()
               
-    async def save(self, sql: str) -> None:
-        await self.execute()
+    def save(self, sql: str) -> None:
+        self.execute()
         if self.cursor is not None and self.connection is not None:
             self.cursor.execute(sql)
             self.connection.commit()
         
-    async def query(self, sql: str) -> List:
-        await self.execute()
+    def query(self, sql: str) -> List:
+        self.execute()
         if self.cursor is not None:
             self.cursor.execute(sql)
             return self.cursor.fetchall()
         else:
             return []
     
-    async def insert_waterlevel(self, station: Station):
+    def insert_waterlevel(self, station: Station):
         """保存水位数据
 
         Args:
@@ -58,7 +58,6 @@ class PostgresStorage():
            for wateritem_list in batched(station.water_items, n=1000):
                 sql = SQL
                 for water_item in wateritem_list:
-                    sql += f"('{water_item.timestamp}', {water_item.height})," # type: ignore
+                    sql += f"('{water_item.timestamp}', {water_item.height}),"
                 sql= sql[:-1] + "ON CONFLICT (ts) DO NOTHING;"
-                await self.save(sql + ";")
-                
+                self.save(sql)

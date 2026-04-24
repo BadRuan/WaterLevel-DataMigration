@@ -11,12 +11,20 @@ resolution-markers = [
 ]
 
 [[package]]
-name = "click"
-version = "7.0"
-source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple" }
-sdist = { url = "https://pypi.tuna.tsinghua.edu.cn/packages/f8/5c/f60e9d8a1e77005f664b76ff8aeaee5bc05d0a91798afd7f53fc998dbc47/Click-7.0.tar.gz", hash = "sha256:5b94b49521f6456670fdb30cd82a4eca9412788a93fa6dd6df72c94d5a8ff2d7", size = 286192 }
-wheels = [
-    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/fa/37/45185cb5abbc30d7257104c434fe0b07e5a195a6847506c074527aa599ec/Click-7.0-py2.py3-none-any.whl", hash = "sha256:2335065e6395b9e67ca716de5f7526736bfa6ceead690adf616d925bdc622b13", size = 81299 },
+name = "data-migration"
+version = "0.1.0"
+source = { virtual = "." }
+dependencies = [
+    { name = "pandas" },
+    { name = "psycopg2-binary" },
+    { name = "rich" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "pandas", specifier = ">=3.0.1" },
+    { name = "psycopg2-binary", specifier = ">=2.9.11" },
+    { name = "rich", specifier = ">=14.3.3" },
 ]
 
 [[package]]
@@ -235,52 +243,6 @@ source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple" }
 sdist = { url = "https://pypi.tuna.tsinghua.edu.cn/packages/94/e7/b2c673351809dca68a0e064b6af791aa332cf192da575fd474ed7d6f16a2/six-1.17.0.tar.gz", hash = "sha256:ff70335d468e7eb6ec65b95b99d3a2836546063f63acc5171de367e834932a81", size = 34031 }
 wheels = [
     { url = "https://pypi.tuna.tsinghua.edu.cn/packages/b7/ce/149a00dd41f10bc29e5921b496af8b574d8413afcd5e30dfa0ed46c2cc5e/six-1.17.0-py2.py3-none-any.whl", hash = "sha256:4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274", size = 11050 },
-]
-
-[[package]]
-name = "taos"
-version = "1.0.1"
-source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple" }
-dependencies = [
-    { name = "click" },
-]
-sdist = { url = "https://pypi.tuna.tsinghua.edu.cn/packages/1c/f7/6f026691ac056ee2977005b5dbb46ef9773992c65f4598aa4e968bee21a0/taos-1.0.1.tar.gz", hash = "sha256:2daeff0d907dbde700e327ce4bc3b9f0e15246914a4b4ba1fea3a49a3fd57781", size = 2735 }
-wheels = [
-    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/e9/34/eddd3e82f4e8783109cc2319993c13a3a845f01364b24b2cfc5401713596/taos-1.0.1-py3-none-any.whl", hash = "sha256:c05f681950f3e182e28e30f772805a33eafebc4d79101375499fdeb9de0d159d", size = 15988 },
-]
-
-[[package]]
-name = "taos-ws-py"
-version = "0.6.6"
-source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple" }
-wheels = [
-    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/ec/ae/1398c77d1d981f15e092f451865ed1296c6b763add06687b83f31ad6efa7/taos_ws_py-0.6.6-cp37-abi3-macosx_10_12_x86_64.macosx_11_0_arm64.macosx_10_12_universal2.whl", hash = "sha256:62c549fc2e4d42062c9f125de660391afa1dd8cfbc38d72c5be4d2f906e25393", size = 8092467 },
-    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/2b/ee/b54f033c3cc7629c19e6f860b8655f9195cea458f680bb6119c8fba1f72b/taos_ws_py-0.6.6-cp37-abi3-macosx_10_12_x86_64.whl", hash = "sha256:f009f2e4c0bbfc2ad9e86590b11ce53832d970c1ec7eb17238f149aaf4a2f144", size = 4130395 },
-    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/a5/ed/949d03408b27af71f2c5794b75c9069732aecce2a9895cd39a1492727efc/taos_ws_py-0.6.6-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:791b77688061c65bdd5f9b85eebaaed4015e065705dfb54625d34bda26ad3fd6", size = 4302494 },
-    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/78/36/772590e43672168c4d4fdcc2be4d8293c49b1eedeb979ab1e183e772f369/taos_ws_py-0.6.6-cp37-abi3-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:a54e1da8469b332c9f762ff52ee060bd97f7a9cbb0bf4be405cbc14f3735371e", size = 4026865 },
-    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/56/77/6ac8979c8275163d626133bcea40c79e85e91170beec85f8a9bd75ef5e97/taos_ws_py-0.6.6-cp37-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:64b8904fcc6b4f96a2100daedc5dc7b3e02b02a7c1b1fec64efa9f21447c8f95", size = 4496034 },
-    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/4f/95/8d50c218dd508018a0b167f4b8bb22e2c5ccf5628ef8a5f299e15e80e4a3/taos_ws_py-0.6.6-cp37-abi3-win_amd64.whl", hash = "sha256:984e5f42efa542746db2a8be8ebbbc984f3b79c5d8186b6173a54be3a8b325d6", size = 4759817 },
-]
-
-[[package]]
-name = "tmp"
-version = "0.1.0"
-source = { virtual = "." }
-dependencies = [
-    { name = "pandas" },
-    { name = "psycopg2-binary" },
-    { name = "rich" },
-    { name = "taos" },
-    { name = "taos-ws-py" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "pandas", specifier = ">=3.0.1" },
-    { name = "psycopg2-binary", specifier = ">=2.9.11" },
-    { name = "rich", specifier = ">=14.3.3" },
-    { name = "taos", specifier = ">=1.0.1" },
-    { name = "taos-ws-py", specifier = ">=0.6.6" },
 ]
 
 [[package]]

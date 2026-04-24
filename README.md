@@ -58,6 +58,9 @@ create table if not exists station_60115400 (
 create table if not exists station_62904400 (
  like station including all
 ) inherits (station);
+create table if not exists station_62904500 (
+ like station including all
+) inherits (station);
 create table if not exists station_62900700 (
  like station including all
 ) inherits (station);

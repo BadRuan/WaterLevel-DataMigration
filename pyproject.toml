@@ -8,6 +8,4 @@ dependencies = [
     "pandas>=3.0.1",
     "psycopg2-binary>=2.9.11",
     "rich>=14.3.3",
-    "taos>=1.0.1",
-    "taos-ws-py>=0.6.6",
 ]
