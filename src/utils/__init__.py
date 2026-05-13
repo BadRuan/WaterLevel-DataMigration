@@ -1,4 +1,4 @@
 from .logger import log
-from .storage import PostgresStorage as Storage
+from .storage import Storage
 
 __all__ = ['log', 'Storage']

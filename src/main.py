@@ -1,10 +1,11 @@
+from asyncio import run
 from pandas import read_csv
 from utils import Storage, log
 from model import WaterItem
 from settings import file_path, stations_list
 
 
-def main():
+async def main():
     try:
         df = read_csv(file_path, header=0)
         total_count: int = len(df)
@@ -17,8 +18,8 @@ def main():
                 if code == station.code:
                     station.water_items.append(w)
         for station in stations_list:
-            with Storage() as storage:
-                storage.insert_waterlevel(station)
+            async with Storage() as storage:
+                await storage.insert_waterlevel(station)
                 log(f"{station.name}站有 {len(station.water_items)} 条水位数据")
     except ValueError as e:
         log(e)
@@ -27,4 +28,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    run(main())

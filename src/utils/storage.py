@@ -1,53 +1,54 @@
-from typing import List
+from typing import List, Any, Optional
 from itertools import batched
-from psycopg2 import connect as pq_connect
-from model import Station
+from asyncpg import connect
 from settings import postgres
+from model import Station
 
 
-class PostgresStorage():   
+class Storage():   
     def __init__(self) -> None:
         self.connection = None
-        self.cursor = None
         self.initialized = None
     
-    def __enter__(self):
-        self.ensure_initialized()
+    async def __aenter__(self):
+        await self.ensure_initialized()
         return self
     
-    def __exit__(self, exc_type, exc, tb):
-        if self.cursor is not None:
-            self.cursor.close()
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
         if self.connection is not None:
-            self.connection.close()
+            await self.connection.close()
     
-    def ensure_initialized(self):
+    async def ensure_initialized(self):
         if self.initialized is None:
-            self.init_connect()
+            await self.init_connect()
             
-    def execute(self) -> None:
-        self.ensure_initialized()
-
-    def init_connect(self):
-        self.connection = pq_connect(host=postgres.url, user=postgres.user, password=postgres.password, port=postgres.port, database=postgres.database)
-        if self.connection is not None:    
-            self.cursor = self.connection.cursor()
-              
-    def save(self, sql: str) -> None:
-        self.execute()
-        if self.cursor is not None and self.connection is not None:
-            self.cursor.execute(sql)
-            self.connection.commit()
+    async def init_connect(self):
+        self.connection = await connect(host=postgres.url, user=postgres.user, password=postgres.password, port=postgres.port, database=postgres.database)
+                   
+    async def query_one(self, sql: str) -> Optional[Any]:
+        if self.connection is not None:
+            result = await self.connection.fetchrow(sql)
+            if result is None:
+                return None
+            else:
+                return result
+        else:
+            return ''
         
-    def query(self, sql: str) -> List:
-        self.execute()
-        if self.cursor is not None:
-            self.cursor.execute(sql)
-            return self.cursor.fetchall()
+    async def query_list(self, sql: str) -> List[Any]:
+        if self.connection is not None:
+            return await self.connection.fetch(sql)
         else:
             return []
     
-    def insert_waterlevel(self, station: Station):
+    async def save(self, sql: str) -> int:
+        if self.connection is not None:
+            affected_rows:int = await self.connection.execute(sql)
+            return affected_rows
+        else:
+            return 0
+    
+    async def insert_waterlevel(self, station: Station):
         """保存水位数据
 
         Args:
@@ -60,4 +61,4 @@ class PostgresStorage():
                 for water_item in wateritem_list:
                     sql += f"('{water_item.timestamp}', {water_item.height}),"
                 sql= sql[:-1] + "ON CONFLICT (ts) DO NOTHING;"
-                self.save(sql)
+                await self.save(sql)

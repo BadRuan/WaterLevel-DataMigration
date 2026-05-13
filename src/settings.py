@@ -11,7 +11,7 @@ class DataConfig(NamedTuple):
 
 type station_item = Tuple[int, str]
 
-postgres = DataConfig(url='100.68.9.83', user='postgres', password='Deepseek666', port=54321, database='water') 
+postgres = DataConfig(url='100.122.72.21', user='postgres', password='E,*f*YdGgYSgqfze1tLqc0Pm8CK2', port=36999, database='water') 
 
 file_path: str = './data/waterlevel_202601141954.csv'
 
